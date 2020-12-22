@@ -40,23 +40,34 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 
 lm = LinearRegression()
-lm.fit(rating_factors_encoded, df[claims])
+lm.fit(X_train, y_train)
 
 plot_feature_importance(lm, list(rating_factors_encoded.columns))
 
-lin_exp = shap.LinearExplainer(lm, X_train)
-shap_values = lin_exp(X_train)
+
+background = shap.maskers.Independent(X_train, max_samples=1000)
+explainer = shap.LinearExplainer(lm, X_train)
+shap_values = explainer(X_train)
+
+idx = 1
+
 shap.plots.beeswarm(shap_values, show=False)
 plt.savefig(output_path + "\\shap_summary_plot.png")
 plt.clf()
 
-idx = 1
-shap.force_plot(shap_values[0], rating_factors_encoded.iloc[0, :], matplotlib=True, show=False)
+
+shap.plots.waterfall(shap_values[idx], max_display=14, show=False)
+plt.savefig(output_path + "\\shap_waterfall_plot.png")
+plt.clf()
+
+
+shap.force_plot(explainer.expected_value, shap_values)
 plt.savefig(output_path + "\\shap_plot_{}.png".format(idx))
 plt.clf()
 
-shap.force_plot(shap_values, rating_factors_encoded, matplotlib=True, show=False)
-plt.savefig(output_path + "\\shap_plot_stacked.png")
+#shap.force_plot(shap_values, rating_factors_encoded, matplotlib=True, show=False)
+#plt.savefig(output_path + "\\shap_plot_stacked.png")
+
 
 
 if __name__ == "__main__":
