@@ -57,6 +57,7 @@ plt.clf()
 
 
 shap.plots.waterfall(shap_values[idx], max_display=14, show=False)
+plt.figure(figsize=(20, 10))
 plt.savefig(output_path + "\\shap_waterfall_plot.png")
 plt.clf()
 
@@ -73,4 +74,3 @@ plt.clf()
 if __name__ == "__main__":
     for factor in rating_factors:
         plot_export_corr(df, factor, claims, output_path)
-
